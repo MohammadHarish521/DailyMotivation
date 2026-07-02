@@ -28,3 +28,17 @@ export interface DayInfo {
   /** Full date key in "YYYY-MM-DD" format. */
   dateKey?: string;
 }
+
+/**
+ * Onboarding results, used to personalize content across the app.
+ */
+export interface UserPreferences {
+  /** Display name used in greetings. */
+  name: string;
+  /** Selected struggles, e.g. ["stress", "focus"]. */
+  struggles: string[];
+  /** Selected content categories, e.g. ["motivation", "mindfulness"]. */
+  categories: string[];
+  /** ISO timestamp marking onboarding completion. */
+  onboardedAt: string;
+}

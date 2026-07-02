@@ -6,17 +6,20 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { HabitCard } from "../components/HabitCard";
 import { WeekCalendar } from "../components/WeekCalendar";
 import { useHabits } from "../context/HabitsContext";
+import { usePreferences } from "../context/PreferencesContext";
+import { useTimeGreeting } from "../hooks/useTimeGreeting";
 import { typography } from "../theme/typography";
 import { DayInfo } from "../types";
 
 export const HomeScreen: React.FC = () => {
   const { habits, loading } = useHabits();
+  const { preferences } = usePreferences();
+  const greeting = useTimeGreeting();
   const [selectedDay, setSelectedDay] = useState<DayInfo | null>(null);
 
   const weekDays: DayInfo[] = [
@@ -46,7 +49,10 @@ export const HomeScreen: React.FC = () => {
         <View style={styles.content}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.greeting}>Good Morning, Alice</Text>
+            <Text style={styles.greeting}>
+              {greeting}
+              {preferences?.name ? `, ${preferences.name}` : ""}
+            </Text>
           </View>
 
           {/* Week Calendar */}
@@ -58,26 +64,6 @@ export const HomeScreen: React.FC = () => {
           ))}
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tab}>
-          <View style={styles.tabIcon}>
-            <View style={styles.homeIcon} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <View style={styles.tabIconCircle} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <View style={styles.tabIconCircle} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
-          <View style={styles.profilePic}>
-            <Text style={styles.profileText}>👤</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
 
       <StatusBar style="dark" />
     </SafeAreaView>
@@ -107,53 +93,5 @@ const styles = StyleSheet.create({
     ...typography.bold,
     fontSize: 28,
     color: "#1A1A1A",
-  },
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#FFF",
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    justifyContent: "space-around",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  tab: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  tabIcon: {
-    width: 32,
-    height: 32,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  homeIcon: {
-    width: 24,
-    height: 24,
-    backgroundColor: "#1A1A1A",
-    borderRadius: 6,
-  },
-  tabIconCircle: {
-    width: 24,
-    height: 24,
-    backgroundColor: "#E0E0E0",
-    borderRadius: 12,
-  },
-  profilePic: {
-    width: 36,
-    height: 36,
-    backgroundColor: "#D4F4DD",
-    borderRadius: 18,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  profileText: {
-    fontSize: 20,
   },
 });

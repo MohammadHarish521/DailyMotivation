@@ -10,6 +10,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { HabitsProvider } from "../src/context/HabitsContext";
+import { PreferencesProvider } from "../src/context/PreferencesContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,8 +34,10 @@ export default function RootLayout() {
   }
 
   return (
-    <HabitsProvider>
-      <Stack screenOptions={{ headerShown: false }} />
-    </HabitsProvider>
+    <PreferencesProvider>
+      <HabitsProvider>
+        <Stack screenOptions={{ headerShown: false }} />
+      </HabitsProvider>
+    </PreferencesProvider>
   );
 }
