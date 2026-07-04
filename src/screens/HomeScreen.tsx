@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
@@ -12,21 +12,25 @@ import { HabitCard } from "../components/HabitCard";
 import { QuoteCard } from "../components/QuoteCard";
 import { StreakBadge } from "../components/StreakBadge";
 import { WeekCalendar } from "../components/WeekCalendar";
+import { useFavorites } from "../context/FavoritesContext";
 import { useHabits } from "../context/HabitsContext";
 import { usePreferences } from "../context/PreferencesContext";
 import { useQuote } from "../context/QuoteContext";
 import { useTimeGreeting } from "../hooks/useTimeGreeting";
 import { DayInfo } from "../types";
 import { buildWeek } from "../utils/date";
+import { shareViewAsImage } from "../utils/share";
 
 export const HomeScreen: React.FC = () => {
   const { habits, loading, toggleCompletion, isCompleted, getStreak } =
     useHabits();
   const { preferences } = usePreferences();
   const { quote, streak, loading: quoteLoading, getNewQuote } = useQuote();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const greeting = useTimeGreeting();
   const [selectedDay, setSelectedDay] = useState<DayInfo | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const quoteCardRef = useRef<View>(null);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -69,7 +73,16 @@ export const HomeScreen: React.FC = () => {
           </View>
 
           {/* Daily quote */}
-          {quote && <QuoteCard text={quote.text} onRefresh={getNewQuote} />}
+          {quote && (
+            <QuoteCard
+              ref={quoteCardRef}
+              text={quote.text}
+              onRefresh={getNewQuote}
+              isFavorite={isFavorite(quote.id)}
+              onToggleFavorite={() => toggleFavorite(quote.id)}
+              onShare={() => shareViewAsImage(quoteCardRef)}
+            />
+          )}
 
           {/* Week Calendar */}
           <WeekCalendar

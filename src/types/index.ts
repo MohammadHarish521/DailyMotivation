@@ -51,6 +51,14 @@ export interface StreakState {
   lastActiveDateKey: string;
 }
 
+/** User's daily reminder notification preference. */
+export interface NotificationSettings {
+  enabled: boolean;
+  /** 24-hour clock hour, 0-23. */
+  hour: number;
+  minute: number;
+}
+
 /**
  * Onboarding results, used to personalize content across the app.
  */

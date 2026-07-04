@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   CompletionMap,
   Habit,
+  NotificationSettings,
   QuoteState,
   StreakState,
   UserPreferences,
@@ -13,6 +14,8 @@ const SEEDED_KEY = "@dailymotivation/seeded";
 const PREFERENCES_KEY = "@dailymotivation/preferences";
 const QUOTE_STATE_KEY = "@dailymotivation/quoteState";
 const STREAK_KEY = "@dailymotivation/streak";
+const FAVORITES_KEY = "@dailymotivation/favorites";
+const NOTIFICATION_SETTINGS_KEY = "@dailymotivation/notificationSettings";
 
 /**
  * Thin persistence layer over AsyncStorage. All reads are defensive:
@@ -142,6 +145,53 @@ export const storage = {
       await AsyncStorage.setItem(STREAK_KEY, JSON.stringify(state));
     } catch (err) {
       console.warn("Failed to save streak to storage:", err);
+    }
+  },
+
+  async loadFavorites(): Promise<string[]> {
+    try {
+      const raw = await AsyncStorage.getItem(FAVORITES_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as string[]) : [];
+    } catch (err) {
+      console.warn("Failed to load favorites from storage:", err);
+      return [];
+    }
+  },
+
+  async saveFavorites(favorites: string[]): Promise<void> {
+    try {
+      await AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    } catch (err) {
+      console.warn("Failed to save favorites to storage:", err);
+    }
+  },
+
+  async loadNotificationSettings(): Promise<NotificationSettings | null> {
+    try {
+      const raw = await AsyncStorage.getItem(NOTIFICATION_SETTINGS_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object"
+        ? (parsed as NotificationSettings)
+        : null;
+    } catch (err) {
+      console.warn("Failed to load notification settings from storage:", err);
+      return null;
+    }
+  },
+
+  async saveNotificationSettings(
+    settings: NotificationSettings,
+  ): Promise<void> {
+    try {
+      await AsyncStorage.setItem(
+        NOTIFICATION_SETTINGS_KEY,
+        JSON.stringify(settings),
+      );
+    } catch (err) {
+      console.warn("Failed to save notification settings to storage:", err);
     }
   },
 };

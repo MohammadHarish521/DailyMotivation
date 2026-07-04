@@ -75,9 +75,40 @@ routing, built on React Navigation), AsyncStorage for persistence.
   checking off a habit works from either tab.
 - Verified: `tsc --noEmit` clean.
 
-## ⬜ Step 5 — Notifications (expo-notifications daily reminder + settings)
+## ✅ Step 5 — Notifications (expo-notifications daily reminder + settings)
 
-## ⬜ Step 6 — Favorites, sharing & quote-card image
+- Installed `expo-notifications` + `@react-native-community/datetimepicker`;
+  both added to `app.json` plugins (datetimepicker was auto-added by
+  `expo install`).
+- `NotificationSettings` type + `storage.load/saveNotificationSettings`.
+- `src/services/notifications.ts`: permission request, and
+  `scheduleDailyReminder`/`cancelDailyReminder` using a single stable
+  identifier so re-scheduling replaces rather than duplicates.
+- `src/context/NotificationSettingsContext.tsx`: hydrate/persist,
+  `enableReminder` (requests permission, no-ops on denial),
+  `disableReminder`, `setReminderTime`; re-asserts the schedule on launch.
+- `ProfileScreen`: real screen (replaces placeholder) with stats (streak,
+  habit count) and a "Daily reminder" section — toggle switch + time
+  picker (`@react-native-community/datetimepicker`, spinner on iOS).
+- `NotificationSettingsProvider` wired into `app/_layout.tsx`.
+- Verified: `tsc --noEmit` clean.
+
+## ✅ Step 6 — Favorites, sharing & quote-card image
+
+- Installed `expo-sharing` + `react-native-view-shot`.
+- `storage.load/saveFavorites` (array of favorited quote ids).
+- `src/context/FavoritesContext.tsx`: hydrate/persist, `isFavorite`,
+  `toggleFavorite`.
+- `src/utils/share.ts`: `shareViewAsImage` — captures a view ref as a PNG
+  via `captureRef` and opens the native share sheet via
+  `Sharing.shareAsync`, with a graceful fallback alert if unavailable.
+- `QuoteCard`: now `forwardRef` (so it can be captured), with a heart
+  button (favorite toggle) and a share button.
+- `LibraryScreen`: real screen (replaces placeholder) listing favorited
+  quotes with per-card share + un-favorite; empty state when none saved.
+- Home screen's quote card wired to favorites + share.
+- `FavoritesProvider` wired into `app/_layout.tsx`.
+- Verified: `tsc --noEmit` clean.
 
 ## ⬜ Step 7 — Profile & stats screen (+ achievement badges)
 

@@ -10,7 +10,9 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "../global.css";
+import { FavoritesProvider } from "../src/context/FavoritesContext";
 import { HabitsProvider } from "../src/context/HabitsContext";
+import { NotificationSettingsProvider } from "../src/context/NotificationSettingsContext";
 import { PreferencesProvider } from "../src/context/PreferencesContext";
 import { QuoteProvider } from "../src/context/QuoteContext";
 
@@ -37,11 +39,15 @@ export default function RootLayout() {
 
   return (
     <PreferencesProvider>
-      <QuoteProvider>
-        <HabitsProvider>
-          <Stack screenOptions={{ headerShown: false }} />
-        </HabitsProvider>
-      </QuoteProvider>
+      <NotificationSettingsProvider>
+        <QuoteProvider>
+          <FavoritesProvider>
+            <HabitsProvider>
+              <Stack screenOptions={{ headerShown: false }} />
+            </HabitsProvider>
+          </FavoritesProvider>
+        </QuoteProvider>
+      </NotificationSettingsProvider>
     </PreferencesProvider>
   );
 }
