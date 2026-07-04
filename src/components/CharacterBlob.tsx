@@ -1,145 +1,100 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
+
+/**
+ * One shared mascot body color across every habit card, regardless of the
+ * card's background. Only expression + pose change per activity so all
+ * three characters read as the same creature.
+ */
+export const MASCOT_COLOR = "#FFDD9E";
+const MASCOT_SHADOW = "#F0C87A";
+
+export type MascotActivity = "sleep" | "walk" | "meditate";
 
 interface CharacterBlobProps {
-  color: string;
   size?: number;
-  face?: "happy" | "sleeping" | "calm";
-  showArms?: boolean;
+  activity?: MascotActivity;
 }
 
 export const CharacterBlob: React.FC<CharacterBlobProps> = ({
-  color,
   size = 150,
-  face = "happy",
-  showArms = false,
+  activity = "meditate",
 }) => {
+  const isSleep = activity === "sleep";
+  const isWalk = activity === "walk";
+
   return (
-    <View style={[styles.container, { width: size, height: size }]}>
+    <View
+      className="items-center justify-center"
+      style={{ width: size, height: size }}
+    >
       <View
-        style={[
-          styles.blob,
-          { backgroundColor: color, width: size, height: size * 0.8 },
-        ]}
+        className="relative items-center justify-center rounded-[20px]"
+        style={{
+          backgroundColor: MASCOT_COLOR,
+          width: size,
+          height: size * 0.8,
+        }}
       >
         {/* Eyes */}
-        {face === "sleeping" ? (
+        {isSleep ? (
           <>
-            <View style={[styles.eyeClosed, styles.leftEye]} />
-            <View style={[styles.eyeClosed, styles.rightEye]} />
+            <View className="absolute top-[35%] left-[30%] h-0.5 w-3 rounded-sm bg-black" />
+            <View className="absolute top-[35%] right-[30%] h-0.5 w-3 rounded-sm bg-black" />
           </>
         ) : (
           <>
-            <View style={[styles.eye, styles.leftEye]} />
-            <View style={[styles.eye, styles.rightEye]} />
+            <View className="absolute top-[35%] left-[30%] h-2 w-2 rounded-full bg-black" />
+            <View className="absolute top-[35%] right-[30%] h-2 w-2 rounded-full bg-black" />
           </>
         )}
 
-        {/* Mouth */}
-        <View
-          style={[
-            styles.mouth,
-            face === "happy" && styles.mouthHappy,
-            face === "calm" && styles.mouthCalm,
-          ]}
-        />
+        {/* Mouth: calm smile for meditation, open happy smile for walk,
+            small content mouth for sleep */}
+        {isWalk && (
+          <View className="absolute top-[55%] h-2.5 w-5 rounded-bl-[10px] rounded-br-[10px] border-b-2 border-b-black" />
+        )}
+        {!isWalk && !isSleep && (
+          <View className="absolute top-[55%] h-0.5 w-4 rounded-sm bg-black" />
+        )}
+        {isSleep && (
+          <View className="absolute top-[55%] h-1.5 w-2.5 rounded-full bg-black opacity-85" />
+        )}
+
+        {/* Cheeks give every pose the same friendly base look */}
+        <View className="absolute top-[48%] left-[14%] h-1.5 w-2.5 rounded-full bg-[#FF9BCF] opacity-50" />
+        <View className="absolute top-[48%] right-[14%] h-1.5 w-2.5 rounded-full bg-[#FF9BCF] opacity-50" />
       </View>
 
-      {/* Arms */}
-      {showArms && (
+      {/* Arms: raised only in the walking pose to suggest motion */}
+      {isWalk && (
         <>
           <View
-            style={[styles.arm, styles.leftArm, { backgroundColor: color }]}
+            className="absolute top-[40%] -left-[15px] h-2 w-10 -rotate-[30deg] rounded-full"
+            style={{ backgroundColor: MASCOT_COLOR }}
           />
           <View
-            style={[styles.arm, styles.rightArm, { backgroundColor: color }]}
+            className="absolute top-[40%] -right-[15px] h-2 w-10 rotate-[30deg] rounded-full"
+            style={{ backgroundColor: MASCOT_COLOR }}
           />
         </>
       )}
 
-      {/* Legs */}
-      <View style={styles.legs}>
-        <View style={[styles.leg, { backgroundColor: color }]} />
-        <View style={[styles.leg, { backgroundColor: color }]} />
+      {/* Legs: offset stride for walking, even stance otherwise */}
+      <View className={`-mt-2.5 flex-row ${isWalk ? "gap-3" : "gap-5"}`}>
+        <View
+          className={`h-[30px] w-3 rounded-md ${
+            isWalk ? "h-[34px] -translate-y-1 -rotate-[8deg]" : ""
+          }`}
+          style={{ backgroundColor: MASCOT_SHADOW }}
+        />
+        <View
+          className={`h-[30px] w-3 rounded-md ${
+            isWalk ? "h-[26px] translate-y-0.5 rotate-[10deg]" : ""
+          }`}
+          style={{ backgroundColor: MASCOT_SHADOW }}
+        />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  blob: {
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-  },
-  eye: {
-    width: 8,
-    height: 8,
-    backgroundColor: "#000",
-    borderRadius: 4,
-    position: "absolute",
-    top: "35%",
-  },
-  eyeClosed: {
-    width: 12,
-    height: 2,
-    backgroundColor: "#000",
-    borderRadius: 1,
-    position: "absolute",
-    top: "35%",
-  },
-  leftEye: {
-    left: "30%",
-  },
-  rightEye: {
-    right: "30%",
-  },
-  mouth: {
-    width: 20,
-    height: 10,
-    position: "absolute",
-    top: "55%",
-  },
-  mouthHappy: {
-    borderBottomWidth: 2,
-    borderBottomColor: "#000",
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  mouthCalm: {
-    width: 16,
-    height: 2,
-    backgroundColor: "#000",
-    borderRadius: 1,
-  },
-  arm: {
-    width: 40,
-    height: 8,
-    borderRadius: 4,
-    position: "absolute",
-    top: "40%",
-  },
-  leftArm: {
-    left: -15,
-    transform: [{ rotate: "-30deg" }],
-  },
-  rightArm: {
-    right: -15,
-    transform: [{ rotate: "30deg" }],
-  },
-  legs: {
-    flexDirection: "row",
-    gap: 20,
-    marginTop: -10,
-  },
-  leg: {
-    width: 12,
-    height: 30,
-    borderRadius: 6,
-  },
-});

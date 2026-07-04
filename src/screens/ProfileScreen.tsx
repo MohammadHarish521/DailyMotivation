@@ -5,6 +5,6 @@ export const ProfileScreen: React.FC = () => (
   <ScreenPlaceholder
     title="Profile"
     subtitle="Your stats and achievements"
-    emoji="👤"
+    icon="person-outline"
   />
 );

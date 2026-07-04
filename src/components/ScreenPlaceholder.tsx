@@ -1,12 +1,12 @@
+import { Ionicons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { typography } from "../theme/typography";
+import { SafeAreaView, Text, View } from "react-native";
 
 interface ScreenPlaceholderProps {
   title: string;
   subtitle?: string;
-  emoji?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
 }
 
 /**
@@ -16,44 +16,25 @@ interface ScreenPlaceholderProps {
 export const ScreenPlaceholder: React.FC<ScreenPlaceholderProps> = ({
   title,
   subtitle = "Coming soon",
-  emoji = "✨",
+  icon = "sparkles-outline",
 }) => {
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.emoji}>{emoji}</Text>
-        <Text style={styles.title}>{title}</Text>
-        <Text style={styles.subtitle}>{subtitle}</Text>
+    <SafeAreaView className="flex-1 bg-[#FAFAFA]">
+      <View className="flex-1 items-center justify-center p-6">
+        <Ionicons
+          name={icon}
+          size={48}
+          color="#1A1A1A"
+          style={{ marginBottom: 16 }}
+        />
+        <Text className="mb-2 font-[Inter_700Bold] text-[28px] tracking-[-0.08px] text-[#1A1A1A]">
+          {title}
+        </Text>
+        <Text className="font-[Inter_500Medium] text-base tracking-[-0.08px] text-[#8A8A8A]">
+          {subtitle}
+        </Text>
       </View>
       <StatusBar style="dark" />
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
-  content: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 24,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  title: {
-    ...typography.bold,
-    fontSize: 28,
-    color: "#1A1A1A",
-    marginBottom: 8,
-  },
-  subtitle: {
-    ...typography.medium,
-    fontSize: 16,
-    color: "#8A8A8A",
-  },
-});

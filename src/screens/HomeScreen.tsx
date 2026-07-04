@@ -1,39 +1,48 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  RefreshControl,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
 import { HabitCard } from "../components/HabitCard";
+import { QuoteCard } from "../components/QuoteCard";
+import { StreakBadge } from "../components/StreakBadge";
 import { WeekCalendar } from "../components/WeekCalendar";
 import { useHabits } from "../context/HabitsContext";
 import { usePreferences } from "../context/PreferencesContext";
+import { useQuote } from "../context/QuoteContext";
 import { useTimeGreeting } from "../hooks/useTimeGreeting";
-import { typography } from "../theme/typography";
 import { DayInfo } from "../types";
+import { buildWeek } from "../utils/date";
 
 export const HomeScreen: React.FC = () => {
-  const { habits, loading } = useHabits();
+  const { habits, loading, toggleCompletion, isCompleted, getStreak } =
+    useHabits();
   const { preferences } = usePreferences();
+  const { quote, streak, loading: quoteLoading, getNewQuote } = useQuote();
   const greeting = useTimeGreeting();
   const [selectedDay, setSelectedDay] = useState<DayInfo | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const weekDays: DayInfo[] = [
-    { date: 21, day: "Mon", isToday: false },
-    { date: 22, day: "Tue", isToday: false },
-    { date: 23, day: "Wed", isToday: false },
-    { date: 24, day: "Thu", isToday: true },
-    { date: 25, day: "Fri", isToday: false },
-    { date: 26, day: "Sat", isToday: false },
-  ];
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    getNewQuote();
+    // Brief delay so the pull-to-refresh spinner feels intentional rather
+    // than instant/flickery.
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    setRefreshing(false);
+  }, [getNewQuote]);
 
-  if (loading) {
+  // Real rolling 7-day window (6 days back through today), not a hardcoded stub.
+  const weekDays: DayInfo[] = useMemo(() => buildWeek(), []);
+
+  if (loading || quoteLoading) {
     return (
-      <SafeAreaView style={[styles.container, styles.loadingContainer]}>
+      <SafeAreaView className="flex-1 items-center justify-center bg-[#FAFAFA]">
         <ActivityIndicator size="large" color="#1A1A1A" />
         <StatusBar style="dark" />
       </SafeAreaView>
@@ -41,26 +50,43 @@ export const HomeScreen: React.FC = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#FAFAFA]">
       <ScrollView
-        style={styles.scrollView}
+        className="flex-1"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <View style={styles.content}>
+        <View className="p-6 pb-[100px]">
           {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.greeting}>
+          <View className="mb-6 flex-row items-start justify-between gap-3">
+            <Text className="flex-1 font-[Inter_700Bold] text-[28px] tracking-[-0.08px] text-[#1A1A1A]">
               {greeting}
               {preferences?.name ? `, ${preferences.name}` : ""}
             </Text>
+            <StreakBadge streak={streak} />
           </View>
 
+          {/* Daily quote */}
+          {quote && <QuoteCard text={quote.text} onRefresh={getNewQuote} />}
+
           {/* Week Calendar */}
-          <WeekCalendar days={weekDays} onDayPress={setSelectedDay} />
+          <WeekCalendar
+            days={weekDays}
+            selectedDay={selectedDay}
+            onDayPress={setSelectedDay}
+          />
 
           {/* Habits */}
           {habits.map((habit) => (
-            <HabitCard key={habit.id} habit={habit} />
+            <HabitCard
+              key={habit.id}
+              habit={habit}
+              completed={isCompleted(habit.id)}
+              onToggleComplete={() => toggleCompletion(habit.id)}
+              streak={getStreak(habit.id)}
+            />
           ))}
         </View>
       </ScrollView>
@@ -69,29 +95,3 @@ export const HomeScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
-  loadingContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 24,
-    paddingBottom: 100,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  greeting: {
-    ...typography.bold,
-    fontSize: 28,
-    color: "#1A1A1A",
-  },
-});

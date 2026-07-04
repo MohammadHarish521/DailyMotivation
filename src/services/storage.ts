@@ -1,10 +1,18 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CompletionMap, Habit, UserPreferences } from "../types";
+import {
+  CompletionMap,
+  Habit,
+  QuoteState,
+  StreakState,
+  UserPreferences,
+} from "../types";
 
 const HABITS_KEY = "@dailymotivation/habits";
 const COMPLETIONS_KEY = "@dailymotivation/completions";
 const SEEDED_KEY = "@dailymotivation/seeded";
 const PREFERENCES_KEY = "@dailymotivation/preferences";
+const QUOTE_STATE_KEY = "@dailymotivation/quoteState";
+const STREAK_KEY = "@dailymotivation/streak";
 
 /**
  * Thin persistence layer over AsyncStorage. All reads are defensive:
@@ -90,6 +98,50 @@ export const storage = {
       await AsyncStorage.setItem(PREFERENCES_KEY, JSON.stringify(prefs));
     } catch (err) {
       console.warn("Failed to save preferences to storage:", err);
+    }
+  },
+
+  async loadQuoteState(): Promise<QuoteState | null> {
+    try {
+      const raw = await AsyncStorage.getItem(QUOTE_STATE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object"
+        ? (parsed as QuoteState)
+        : null;
+    } catch (err) {
+      console.warn("Failed to load quote state from storage:", err);
+      return null;
+    }
+  },
+
+  async saveQuoteState(state: QuoteState): Promise<void> {
+    try {
+      await AsyncStorage.setItem(QUOTE_STATE_KEY, JSON.stringify(state));
+    } catch (err) {
+      console.warn("Failed to save quote state to storage:", err);
+    }
+  },
+
+  async loadStreak(): Promise<StreakState | null> {
+    try {
+      const raw = await AsyncStorage.getItem(STREAK_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object"
+        ? (parsed as StreakState)
+        : null;
+    } catch (err) {
+      console.warn("Failed to load streak from storage:", err);
+      return null;
+    }
+  },
+
+  async saveStreak(state: StreakState): Promise<void> {
+    try {
+      await AsyncStorage.setItem(STREAK_KEY, JSON.stringify(state));
+    } catch (err) {
+      console.warn("Failed to save streak to storage:", err);
     }
   },
 };

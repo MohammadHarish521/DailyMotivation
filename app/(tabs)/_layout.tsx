@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
-const ACTIVE = "#1A1A1A";
+// Brand green from the card palette, keeping the active nav state tied to
+// the same pastel system instead of a plain black-vs-grey contrast.
+const ACTIVE = "#3F9A63";
 const INACTIVE = "#B0B0B0";
 
 export default function TabsLayout() {
@@ -16,9 +18,9 @@ export default function TabsLayout() {
           backgroundColor: "#FFF",
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
-          height: 72,
-          paddingTop: 8,
-          paddingBottom: 12,
+          height: 64,
+          paddingTop: 4,
+          paddingBottom: 10,
           position: "absolute",
           borderTopWidth: 0,
           shadowColor: "#000",
@@ -27,9 +29,13 @@ export default function TabsLayout() {
           shadowRadius: 8,
           elevation: 10,
         },
+        tabBarItemStyle: {
+          paddingTop: 2,
+        },
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: "Inter_500Medium",
+          marginTop: 2,
         },
       }}
     >

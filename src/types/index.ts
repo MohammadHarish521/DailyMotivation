@@ -30,6 +30,28 @@ export interface DayInfo {
 }
 
 /**
+ * A single motivational quote/affirmation.
+ */
+export interface Quote {
+  id: string;
+  text: string;
+  /** Onboarding struggle/category ids this quote is relevant to. */
+  categories: string[];
+}
+
+/** Which quote is featured today, so it stays stable across app opens. */
+export interface QuoteState {
+  quoteId: string;
+  dateKey: string;
+}
+
+/** Daily engagement streak: consecutive days the app was opened. */
+export interface StreakState {
+  count: number;
+  lastActiveDateKey: string;
+}
+
+/**
  * Onboarding results, used to personalize content across the app.
  */
 export interface UserPreferences {

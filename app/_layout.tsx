@@ -9,8 +9,10 @@ import {
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import "../global.css";
 import { HabitsProvider } from "../src/context/HabitsContext";
 import { PreferencesProvider } from "../src/context/PreferencesContext";
+import { QuoteProvider } from "../src/context/QuoteContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,9 +37,11 @@ export default function RootLayout() {
 
   return (
     <PreferencesProvider>
-      <HabitsProvider>
-        <Stack screenOptions={{ headerShown: false }} />
-      </HabitsProvider>
+      <QuoteProvider>
+        <HabitsProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </HabitsProvider>
+      </QuoteProvider>
     </PreferencesProvider>
   );
 }

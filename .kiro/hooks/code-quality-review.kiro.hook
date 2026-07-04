@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Code Quality Review",
+  "description": "Analyzes modified source files for code smells, design pattern opportunities, and best practices, suggesting improvements to readability, maintainability, and performance without changing functionality.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "app/**/*.ts",
+      "app/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A source file was just edited and saved. Review the changes in this file for potential improvements:\n\n1. Code smells (duplication, long functions, deep nesting, magic numbers/strings, unclear naming)\n2. Opportunities to apply better design patterns idiomatic to React/React Native and TypeScript\n3. Best practices for readability and maintainability\n4. Performance optimizations (unnecessary re-renders, missing memoization, inefficient loops, etc.)\n\nDo NOT change the functionality or behavior of the code. Present suggestions as a concise list with brief rationale, and only apply the edits if they are low-risk, non-breaking improvements. For anything that changes behavior or is a matter of style preference, just suggest it and ask before applying."
+  }
+}

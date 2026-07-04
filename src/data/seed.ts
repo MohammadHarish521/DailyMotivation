@@ -8,20 +8,20 @@ import { NewHabit } from "../context/HabitsContext";
 export const DEFAULT_HABITS: NewHabit[] = [
   {
     title: "Sleep for 8 hours",
-    duration: "Everyday",
-    frequency: "",
+    duration: "8h",
+    frequency: "Everyday",
     color: "#D4F4DD",
   },
   {
     title: "Go for a walk",
     duration: "25 min",
-    frequency: "",
-    color: "#FFB3D9",
+    frequency: "Everyday",
+    color: "#F2A0C6",
   },
   {
     title: "Meditation",
     duration: "15 min",
-    frequency: "",
+    frequency: "Everyday",
     color: "#A8D5FF",
   },
 ];

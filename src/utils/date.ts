@@ -28,6 +28,15 @@ export function fromDateKey(key: string): Date {
 }
 
 /**
+ * Returns the "YYYY-MM-DD" key for the day immediately before the given key.
+ */
+export function previousDateKey(key: string): string {
+  const d = fromDateKey(key);
+  d.setDate(d.getDate() - 1);
+  return toDateKey(d);
+}
+
+/**
  * Builds a rolling window of days ending on today, driven by the real
  * current date. Defaults to the trailing 6 days plus today (7 total).
  */

@@ -5,6 +5,6 @@ export const LibraryScreen: React.FC = () => (
   <ScreenPlaceholder
     title="Library"
     subtitle="Your favorite quotes will live here"
-    emoji="📚"
+    icon="book-outline"
   />
 );

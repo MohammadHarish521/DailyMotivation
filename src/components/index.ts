@@ -1,5 +1,9 @@
+export { AddHabitModal } from "./AddHabitModal";
 export { CharacterBlob } from "./CharacterBlob";
 export { HabitCard } from "./HabitCard";
 export { OptionGrid } from "./OptionGrid";
+export { QuoteCard } from "./QuoteCard";
 export { ScreenPlaceholder } from "./ScreenPlaceholder";
+export { StreakBadge } from "./StreakBadge";
 export { WeekCalendar } from "./WeekCalendar";
+export { WeekHeatmap } from "./WeekHeatmap";

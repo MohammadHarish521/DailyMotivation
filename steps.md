@@ -48,9 +48,32 @@ routing, built on React Navigation), AsyncStorage for persistence.
   user's name (no more hardcoded "Alice").
 - Verified: `tsc --noEmit` clean.
 
-## ⬜ Step 3 — Home screen (daily hook: quote card, streak, new quote, pull-to-refresh)
+## ✅ Step 3 — Home screen (daily hook: quote card, streak, new quote, pull-to-refresh)
 
-## ⬜ Step 4 — Habit & goal tracker (add habits, check off, weekly heatmap)
+- `QuoteContext`: stable daily quote (persisted per day), weighted toward
+  onboarding struggles/categories, engagement streak (bumps once/day,
+  resets on a missed day).
+- `QuoteCard` + `StreakBadge` components; "New quote ↻" button and
+  pull-to-refresh both call `getNewQuote`.
+- `WeekCalendar` now driven by `buildWeek()` (real rolling 7-day window)
+  instead of a hardcoded fake week.
+- `QuoteProvider` wired into `app/_layout.tsx`.
+- Verified: `tsc --noEmit` clean.
+
+## ✅ Step 4 — Habit & goal tracker (add habits, check off, weekly heatmap)
+
+- `HabitsScreen`: real screen (replaces the placeholder) with a "+" button,
+  empty state, and a list of `HabitCard`s wired to the store.
+- `AddHabitModal`: bottom-sheet form (title required, duration/frequency
+  free-text, pastel color picker) that calls `addHabit`.
+- `HabitCard`: now supports an optional checkbox (`onToggleComplete`/
+  `completed`) for daily check-off, a streak flame badge, and an optional
+  `WeekHeatmap` strip; long-press prompts to delete via `Alert`.
+- `WeekHeatmap` component: 7-dot completion strip per habit, driven by
+  `buildWeek()` + `isCompleted`.
+- Home screen's habit cards also got the checkbox + streak badge so
+  checking off a habit works from either tab.
+- Verified: `tsc --noEmit` clean.
 
 ## ⬜ Step 5 — Notifications (expo-notifications daily reminder + settings)
 

@@ -5,7 +5,6 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -14,7 +13,6 @@ import {
 import { OptionGrid } from "../components/OptionGrid";
 import { usePreferences } from "../context/PreferencesContext";
 import { CATEGORIES, STRUGGLES } from "../data/onboarding";
-import { typography } from "../theme/typography";
 import { WelcomeScreen } from "./WelcomeScreen";
 
 interface OnboardingScreenProps {
@@ -25,6 +23,13 @@ interface OnboardingScreenProps {
 // Steps after the welcome screen (index 0).
 const TOTAL_STEPS = 4;
 
+// Hoisted outside the component so these aren't reallocated on every render.
+const SCROLL_CONTENT_STYLE = { flexGrow: 1, padding: 24, paddingTop: 32 };
+const BACK_HIT_SLOP = { top: 12, bottom: 12, left: 12, right: 12 };
+
+const toggle = (list: string[], id: string) =>
+  list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
+
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   onDone,
 }) => {
@@ -34,9 +39,6 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   const [struggles, setStruggles] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
-
-  const toggle = (list: string[], id: string) =>
-    list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
 
   const next = () => setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
@@ -62,34 +64,38 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     (step === 3 && categories.length > 0);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-[#FAFAFA]">
       <KeyboardAvoidingView
-        style={styles.flex}
+        className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         {/* Progress dots */}
-        <View style={styles.progress}>
+        <View className="flex-row justify-center gap-2 pt-4">
           {Array.from({ length: TOTAL_STEPS - 1 }).map((_, i) => (
             <View
               key={i}
-              style={[styles.dot, i + 1 <= step && styles.dotActive]}
+              className={`h-1.5 w-6 rounded-[3px] ${
+                i + 1 <= step ? "bg-[#2B5CE6]" : "bg-[#E0E0E0]"
+              }`}
             />
           ))}
         </View>
 
         <ScrollView
-          contentContainerStyle={styles.content}
+          contentContainerStyle={SCROLL_CONTENT_STYLE}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
           {step === 1 && (
             <View>
-              <Text style={styles.title}>What should we call you?</Text>
-              <Text style={styles.subtitle}>
-                We'll use this to greet you each day.
+              <Text className="mb-2 font-[Inter_700Bold] text-[28px] tracking-[-0.08px] text-[#1A1A1A]">
+                What should we call you?
+              </Text>
+              <Text className="mb-7 font-[Inter_500Medium] text-base leading-[22px] tracking-[-0.08px] text-[#8A8A8A]">
+                We&apos;ll use this to greet you each day.
               </Text>
               <TextInput
-                style={styles.input}
+                className="rounded-2xl border-2 border-[#EDEDED] bg-white px-5 py-4 font-[Inter_500Medium] text-lg tracking-[-0.08px] text-[#1A1A1A]"
                 placeholder="Your name"
                 placeholderTextColor="#B0B0B0"
                 value={name}
@@ -104,10 +110,12 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
           {step === 2 && (
             <View>
-              <Text style={styles.title}>What are you working on?</Text>
-              <Text style={styles.subtitle}>
-                Pick anything you'd like support with. Choose as many as you
-                like.
+              <Text className="mb-2 font-[Inter_700Bold] text-[28px] tracking-[-0.08px] text-[#1A1A1A]">
+                What are you working on?
+              </Text>
+              <Text className="mb-7 font-[Inter_500Medium] text-base leading-[22px] tracking-[-0.08px] text-[#8A8A8A]">
+                Pick anything you&apos;d like support with. Choose as many as
+                you like.
               </Text>
               <OptionGrid
                 options={STRUGGLES}
@@ -119,9 +127,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
           {step === 3 && (
             <View>
-              <Text style={styles.title}>Pick your categories</Text>
-              <Text style={styles.subtitle}>
-                We'll tailor your daily quotes to these.
+              <Text className="mb-2 font-[Inter_700Bold] text-[28px] tracking-[-0.08px] text-[#1A1A1A]">
+                Pick your categories
+              </Text>
+              <Text className="mb-7 font-[Inter_500Medium] text-base leading-[22px] tracking-[-0.08px] text-[#8A8A8A]">
+                We&apos;ll tailor your daily quotes to these.
               </Text>
               <OptionGrid
                 options={CATEGORIES}
@@ -133,25 +143,26 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         </ScrollView>
 
         {/* Footer nav */}
-        <View style={styles.footer}>
+        <View className="flex-row items-center justify-between px-6 py-4">
           <TouchableOpacity
-            style={styles.backButton}
+            className="px-2 py-3"
             onPress={back}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            hitSlop={BACK_HIT_SLOP}
           >
-            <Text style={styles.backText}>Back</Text>
+            <Text className="font-[Inter_600SemiBold] text-base tracking-[-0.08px] text-[#8A8A8A]">
+              Back
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[
-              styles.nextButton,
-              (!canContinue || saving) && styles.nextButtonDisabled,
-            ]}
+            className={`items-center rounded-[20px] px-10 py-4 ${
+              !canContinue || saving ? "bg-[#BFCDF3]" : "bg-[#2B5CE6]"
+            }`}
             onPress={step === 3 ? finish : next}
             disabled={!canContinue || saving}
             activeOpacity={0.85}
           >
-            <Text style={styles.nextText}>
+            <Text className="font-[Inter_700Bold] text-base tracking-[-0.08px] text-white">
               {step === 3 ? (saving ? "Saving..." : "Get started") : "Continue"}
             </Text>
           </TouchableOpacity>
@@ -161,88 +172,3 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FAFAFA",
-  },
-  flex: {
-    flex: 1,
-  },
-  progress: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 8,
-    paddingTop: 16,
-  },
-  dot: {
-    width: 24,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: "#E0E0E0",
-  },
-  dotActive: {
-    backgroundColor: "#2B5CE6",
-  },
-  content: {
-    padding: 24,
-    paddingTop: 32,
-    flexGrow: 1,
-  },
-  title: {
-    ...typography.bold,
-    fontSize: 28,
-    color: "#1A1A1A",
-    marginBottom: 8,
-  },
-  subtitle: {
-    ...typography.medium,
-    fontSize: 16,
-    color: "#8A8A8A",
-    marginBottom: 28,
-    lineHeight: 22,
-  },
-  input: {
-    ...typography.medium,
-    fontSize: 18,
-    color: "#1A1A1A",
-    backgroundColor: "#FFF",
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: "#EDEDED",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  footer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  backButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-  },
-  backText: {
-    ...typography.semiBold,
-    fontSize: 16,
-    color: "#8A8A8A",
-  },
-  nextButton: {
-    backgroundColor: "#2B5CE6",
-    borderRadius: 20,
-    paddingVertical: 16,
-    paddingHorizontal: 40,
-    alignItems: "center",
-  },
-  nextButtonDisabled: {
-    backgroundColor: "#BFCDF3",
-  },
-  nextText: {
-    ...typography.bold,
-    fontSize: 16,
-    color: "#FFF",
-  },
-});
